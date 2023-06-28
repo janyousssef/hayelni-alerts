@@ -39,7 +39,7 @@ public class HttpTriggerJava {
     @FunctionName("alert")
     public void alert(
             @HttpTrigger(name = "req",
-                    methods = {HttpMethod.GET},
+                    methods = {HttpMethod.POST},
                     authLevel = AuthorizationLevel.ANONYMOUS)
             HttpRequestMessage<Optional<String>> req) {
 
