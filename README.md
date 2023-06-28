@@ -3,5 +3,7 @@ Sends an email alert if someone attempts to run my graduation project without th
 
 ## Technologies
 - Java 17
-- Quarkus
+- SendGrid for email
 - Azure Functions
+- Maven
+- Azure Toolkit for IntelliJ
