@@ -1,5 +1,5 @@
 # Description
-Sends an email alert if someone attempts to run my graduation project without the proper permissions.
+Deployed on Azure Functions, Sends an email alert if someone attempts to run my graduation project without the proper permissions.
 
 ## Technologies
 - Java 17
