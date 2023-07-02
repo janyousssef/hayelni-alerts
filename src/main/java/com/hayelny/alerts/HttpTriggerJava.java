@@ -1,6 +1,9 @@
 package com.hayelny.alerts;
 
-import com.microsoft.azure.functions.*;
+import com.microsoft.azure.functions.HttpMethod;
+import com.microsoft.azure.functions.HttpRequestMessage;
+import com.microsoft.azure.functions.HttpResponseMessage;
+import com.microsoft.azure.functions.HttpStatus;
 import com.microsoft.azure.functions.annotation.AuthorizationLevel;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
@@ -33,6 +36,11 @@ public class HttpTriggerJava {
                          methods = {HttpMethod.GET},
                          authLevel = AuthorizationLevel.ANONYMOUS)
             HttpRequestMessage<Optional<String>> request) {
+
+        if (request.getQueryParameters().get("msg").equals("thisisnotadrill"))
+            return request.createResponseBuilder(HttpStatus.OK)
+                    .body("NOT A DRILL: pinged at " + LocalTime.now())
+                    .build();
         return request.createResponseBuilder(HttpStatus.OK).body("pinged at " + LocalTime.now()).build();
     }
 
@@ -42,23 +50,25 @@ public class HttpTriggerJava {
                     methods = {HttpMethod.POST},
                     authLevel = AuthorizationLevel.ANONYMOUS)
             HttpRequestMessage<Optional<String>> req) {
-
-        Content content = new Content("text/plain", "Someone has attempted to run hayelny without permission at " +
-                LocalDateTime.now().atOffset(ZoneOffset.ofHours(3)));
-        for (int i = 0; i < recipients.length; i++) {
-            mails[i] = new Mail(from, subject, recipients[i], content);
-        }
-
-        Request request = new Request();
-        request.setMethod(Method.POST);
-        request.setEndpoint("mail/send");
-        try {
-            for (Mail mail : mails) {
-                request.setBody(mail.build());
-                sg.api(request);
+        if (req.getQueryParameters().get("msg").equals("thisisnotadrill")) {
+            Content content = new Content("text/plain", "Someone has attempted to run hayelny without permission at " +
+                    LocalDateTime.now().atOffset(ZoneOffset.ofHours(3)));
+            for (int i = 0; i < recipients.length; i++) {
+                mails[i] = new Mail(from, subject, recipients[i], content);
             }
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+
+            Request request = new Request();
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            try {
+                for (Mail mail : mails) {
+                    request.setBody(mail.build());
+                    sg.api(request);
+                }
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
         }
+
     }
 }
