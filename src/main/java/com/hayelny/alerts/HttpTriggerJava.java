@@ -37,7 +37,7 @@ public class HttpTriggerJava {
                          authLevel = AuthorizationLevel.ANONYMOUS)
             HttpRequestMessage<Optional<String>> request) {
 
-        if (request.getQueryParameters().get("msg").equals("thisisnotadrill"))
+        if ("thisisnotadrill".equals(request.getQueryParameters().get("msg")))
             return request.createResponseBuilder(HttpStatus.OK)
                     .body("NOT A DRILL: pinged at " + LocalTime.now())
                     .build();
@@ -50,7 +50,7 @@ public class HttpTriggerJava {
                     methods = {HttpMethod.POST},
                     authLevel = AuthorizationLevel.ANONYMOUS)
             HttpRequestMessage<Optional<String>> req) {
-        if (req.getQueryParameters().get("msg").equals("thisisnotadrill")) {
+        if ("thisisnotadrill".equals(req.getQueryParameters().get("msg"))) {
             Content content = new Content("text/plain", "Someone has attempted to run hayelny without permission at " +
                     LocalDateTime.now().atOffset(ZoneOffset.ofHours(3)));
             for (int i = 0; i < recipients.length; i++) {
